@@ -1,0 +1,59 @@
+#include "DualG2HighPowerMotorShield.h"
+
+
+DualG2HighPowerMotorShield24v18 md;
+
+int potPin = A2; //definerer A2 som port for pointometer
+int potValue; // Variabel for avlest verdi
+int writeValue; // variabel som overfører verdi til PWM port
+
+
+void setup()
+{
+  pinMode(potPin, INPUT);
+  pinMode(9, OUTPUT);
+  
+  Serial.begin(9600);
+  //Serial.println("Dual G2 High Power Motor Shield");
+  md.init();
+  md.calibrateCurrentOffsets();
+
+  delay(10);
+
+  // Uncomment to flip a motor's direction:
+  //md.flipM1(true); // Vi kan bruke disse i en if-loop til å flippe motorene
+  //md.flipM2(true);
+}
+
+
+
+void loop()
+{
+  md.enableDrivers();
+  delay(1);
+  
+  potValue = analogRead(potPin); //Leser spenningen på potensiometeret
+  writeValue = map(potValue, 0, 1023, 0, 255); //Definerer rekkeviden til verdiene og oppløsningen dem i mellom
+  analogWrite(9, writeValue); 
+
+  Serial.print("Pointometer verdi:");
+  Serial.println(potValue);
+  Serial.print("writeValue:");
+  Serial.println(writeValue);
+
+  if (writeValue < 470)
+  {
+    md.setM1Speed(writeValue);
+  }
+  
+  
+  
+  md.setM1Speed(writeValue);
+  //if (forHøy = stopp)// Her må vi sette inn stopp-funksjonen på noe vis
+  {
+    delay(200);
+  }
+}
+
+
+
